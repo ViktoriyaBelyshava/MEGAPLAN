@@ -1,0 +1,649 @@
+{
+	"info": {
+		"_postman_id": "e8fc3cd3-57a2-4cbd-a4fe-e8b00d9e7c23",
+		"name": "MEGAPLAN",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST авториз.сотр1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var body = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.collectionVariables.set(\"user1\", body.access_token);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "Exploratory1@1.1",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "Exploratory1@1.1",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/auth/access_token",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"auth",
+						"access_token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST созд.задачу",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var body = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.collectionVariables.set(\"task_id\", body.data.id);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body contains taskName\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.name).to.eql(\"Тестируем API\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body contains responsibleName\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.responsible.name).to.eql(\"Testing2 Exploratory\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body contains taskStatus\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.status).to.eql(\"assigned\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user1}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"contentType\":\"Task\",\r\n   \"name\":\"Тестируем API\",\r\n   \"deadline\":null,\r\n   \"parent\":null,\r\n   \"isUrgent\":false,\r\n   \"isTemplate\":false,\r\n   \"owner\":{\r\n      \"id\":\"1000104\",\r\n      \"contentType\":\"Employee\"\r\n   },\r\n   \"responsible\":{\r\n      \"id\":\"1000105\",\r\n      \"contentType\":\"Employee\"\r\n   },\r\n   \"contractor\":null,\r\n   \"attaches\":[\r\n      \r\n   ],\r\n   \"Category130CustomFieldDlyaTesta\":null,\r\n   \"Category130CustomFieldTest2\":null\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/task",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"task"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST доб.описание задачи",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var body = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body contains taskDescription\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.statement).to.eql(\"<p>testtesttest</p>\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user1}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"id\":\"1004070\",\r\n   \"contentType\":\"Task\",\r\n   \"attaches\":[\r\n      \r\n   ],\r\n   \"statement\":\"<p>testtesttest</p>\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/task/{{task_id}}",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"task",
+						"{{task_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST авториз.сотр2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var body = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.collectionVariables.set(\"user2\", body.access_token);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "Exploratory2@1.1",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "Exploratory2@1.1",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/auth/access_token",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"auth",
+						"access_token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST принять задачу с2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var body = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body contains taskStatus\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.status).to.eql(\"accepted\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user2}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"action\":\"act_accept_task\",\r\n   \"checkTodos\":false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/task/{{task_id}}/doAction",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"task",
+						"{{task_id}}",
+						"doAction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST завершить",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var body = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body contains taskStatus\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.status).to.eql(\"done\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user2}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"action\":\"act_done\",\r\n   \"checkTodos\":true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/task/{{task_id}}/doAction",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"task",
+						"{{task_id}}",
+						"doAction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST коммент",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var body = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body contains taskStatus\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.content).to.eql(\"<p>Комментарий</p>\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user2}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"contentType\":\"CommentCreateActionRequest\",\r\n   \"comment\":{\r\n      \"contentType\":\"Comment\",\r\n      \"content\":\"<p>Комментарий</p>\",\r\n      \"attaches\":[\r\n         \r\n      ],\r\n      \"workTime\":null,\r\n      \"workDate\":{\r\n         \"contentType\":\"DateTime\",\r\n         \"value\":\"2021-11-29T08:39:32.609Z\"\r\n      },\r\n      \"completed\":0,\r\n      \"owner\":{\r\n         \"id\":\"1000105\",\r\n         \"contentType\":\"Employee\"\r\n      },\r\n      \"subject\":{\r\n         \"id\":\"1004091\",\r\n         \"contentType\":\"Task\"\r\n      },\r\n      \"timeCreated\":{\r\n         \"contentType\":\"DateTime\",\r\n         \"value\":\"2021-11-29T09:23:48.634Z\"\r\n      }\r\n   },\r\n   \"transports\":[\r\n      {\r\n         \r\n      }\r\n   ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/task/{{task_id}}/comments",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"task",
+						"{{task_id}}",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST принять задачу с1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var body = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body contains taskStatus\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.status).to.eql(\"completed\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user1}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"action\":\"act_accept_work\",\r\n   \"checkTodos\":true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/task/{{task_id}}/doAction",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"task",
+						"{{task_id}}",
+						"doAction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST удалить задачу",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var body = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body is correct\", function () {\r",
+							"    pm.response.to.have.body(\r",
+							"    {\r",
+							"    \"meta\": {\r",
+							"        \"status\": 200,\r",
+							"        \"errors\": []\r",
+							"    },\r",
+							"    \"data\": \"Task successfully removed\"\r",
+							"}    \r",
+							"\r",
+							"    );\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user1}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"action\":\"act_accept_work\",\r\n   \"checkTodos\":true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/task/{{task_id}}",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"task",
+						"{{task_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST удалить задачу Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var body = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user1}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"action\":\"act_accept_work\",\r\n   \"checkTodos\":true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/task/{{task_id}}",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"task",
+						"{{task_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "user1",
+			"value": ""
+		},
+		{
+			"key": "user2",
+			"value": ""
+		},
+		{
+			"key": "task_id",
+			"value": ""
+		}
+	]
+}
